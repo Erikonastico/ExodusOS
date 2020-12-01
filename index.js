@@ -9,8 +9,10 @@ client.once('ready', () => {
 //Mensage Listening//
 client.on('message', message => {
     //Variable Declaration//
+    var author_id = message.author.id;
     var saved = '';
     var randomValue = [];
+    const user = message.mentions.users.first();
     /*Mensagem Dividida é a divisão das palavras contidas no conteudo da mensagem.
     Mensagem Dividida[0] = Primeira Palavra.
     Mensagem Dividida[1] = Segunda Palavra.*/
@@ -24,12 +26,11 @@ client.on('message', message => {
             let Instruções = mensagemDividida[1].split("d");
             randomValue = randomGenerating(Instruções[1], Instruções[0]);
             if (typeof randomValue != "undefined") {
-		message.delete({timeout: 250});
-                message.channel.send('**A rolagem foi concluida.** ```Rolagem: ' + mensagemDividida[1] + ' [' + arraySum(randomValue) + ']\nValores Individuais: ' + randomValue + '```');
-            }
-            }
-            
+                message.delete({timeout: 1000})
+                message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**```Rolagem: ' + mensagemDividida[1] + ' [' + arraySum(randomValue) + ']\nValores Individuais: ' + randomValue + '```');
+            }  
         }
+    }
 
     //Funções//
     function randomGenerating(dice, number) {
@@ -46,6 +47,6 @@ client.on('message', message => {
         }
         return sum;
     }        
-});
+})
 
 client.login();
