@@ -10,25 +10,41 @@ client.once('ready', () => {
 client.on('message', message => {
     //Variable Declaration//
     var saved = '';
-    var randomValue;
+    var randomValue = [];
     /*Mensagem Dividida é a divisão das palavras contidas no conteudo da mensagem.
     Mensagem Dividida[0] = Primeira Palavra.
     Mensagem Dividida[1] = Segunda Palavra.*/
     var mensagemDividida = message.content.split(" ");
-    console.log(mensagemDividida);
 
 	if (mensagemDividida[0] === '!roll') {
-        var Instruções = mensagemDividida[1].split('d');
-        //Validação//
-        if (typeof Instruções[0] == 'number' || typeof Instruções[1] == 'number') {
-            randomValue = Instruções[0] * Math.floor(Math.random() * Instruções[1]) + 1;
+        if (mensagemDividida[1][0] === 'd') {
+            message.channel.send("Por favor, informe o numero de dados a serem jogados.");
         }
         else {
-            message.channel.send("Valores errados. Lembre-se, você precisa colocar dados em notação 1d20.");
+            let Instruções = mensagemDividida[1].split("d");
+            randomValue = randomGenerating(Instruções[1], Instruções[0]);
+            if (typeof randomValue != "undefined") {
+                message.channel.send('**A rolagem foi concluida.** ```Rolagem: ' + mensagemDividida[1] + ' [' + arraySum(randomValue) + ']\nValores Individuais: ' + randomValue + '```');
+            }
+            }
+            
         }
-        console.log(randomValue);
-        message.channel.send('d' + mensagemDividida[1] + ' = **[' + randomValue + ']**');
+
+    //Funções//
+    function randomGenerating(dice, number) {
+        let array = [];
+            for (number; number > 0; --number) {
+                array[number-1] = Number(Math.floor((Math.random() * dice) + 1));
+            }
+        return array;
     }
+    function arraySum(value) {
+        let sum = 0;
+        for (i = value.length; i > 0; --i) {
+            sum += value[i-1];    
+        }
+        return sum;
+    }        
 });
 
 client.login();
