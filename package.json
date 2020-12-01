@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Erik",
   "dependencies": {
     "discord.js": "^12.5.1"
   }
