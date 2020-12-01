@@ -27,7 +27,7 @@ client.on('message', message => {
             randomValue = randomGenerating(Instruções[1], Instruções[0]);
             if (typeof randomValue != "undefined") {
                 message.delete({timeout: 1000})
-                message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```Rolagem: ' + mensagemDividida[1] + ' [' + arraySum(randomValue) + ']\nValores Individuais: ' + randomValue + '```');
+                message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```\nRolagem: ' + mensagemDividida[1] + ' [' + arraySum(randomValue) + ']\nValores Individuais: ' + randomValue + '```');
             }  
         }
     }
