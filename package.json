@@ -1,0 +1,10 @@
+{
+  "name": "exodus",
+  "version": "1.0.0",
+  "description": "Bot",
+  "main": "index.js",
+  "author": "Erik",
+  "dependencies": {
+    "discord.js": "^12.5.1"
+  }
+}
