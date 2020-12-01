@@ -6,7 +6,7 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
-client.login('NzgzMDkzMDg0OTM3NTE5MTA0.X8VuRA.xwNgUct-evDrxJ_uHQslulMuzWE');
+client.login(process.env.BOT_TOKEN);
 
 //Mensage Listening//
 client.on('message', message => {
