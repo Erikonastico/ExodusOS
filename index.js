@@ -8,18 +8,25 @@ client.once('ready', () => {
 
 //Mensage Listening//
 client.on('message', message => {
+    //Variable Declaration//
     var saved = '';
     var randomValue;
-    var mensagem = message.content;
-    var mensagemDividida = mensagem.split(" ")
-    console.log(Instruções);
+    /*Mensagem Dividida é a divisão das palavras contidas no conteudo da mensagem.
+    Mensagem Dividida[0] = Primeira Palavra.
+    Mensagem Dividida[1] = Segunda Palavra.*/
+    var mensagemDividida = message.content.split(" ");
+    console.log(mensagemDividida);
+
 	if (mensagemDividida[0] === '!roll') {
-        var Instruções = mensagemDividida[1].split("");
-        for (n = 0; n < Instruções.length; ++n) {
-        saved += Instruções[n];
+        var Instruções = mensagemDividida[1].split('d');
+        //Validação//
+        if (typeof Instruções[0] == 'number' || typeof Instruções[1] == 'number') {
+            randomValue = Instruções[0] * Math.floor(Math.random() * Instruções[1]) + 1;
         }
-        randomValue = Math.floor(Math.random() * saved) + 1;
-        console.log(saved);
+        else {
+            message.channel.send("Valores errados. Lembre-se, você precisa colocar dados em notação 1d20.");
+        }
+        console.log(randomValue);
         message.channel.send('d' + mensagemDividida[1] + ' = **[' + randomValue + ']**');
     }
 });
