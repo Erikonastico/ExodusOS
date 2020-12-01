@@ -6,8 +6,6 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
-client.login(process.env.BOT_TOKEN);
-
 //Mensage Listening//
 client.on('message', message => {
     var saved = '';
@@ -25,3 +23,5 @@ client.on('message', message => {
         message.channel.send('d' + mensagemDividida[1] + ' = **[' + randomValue + ']**');
     }
 });
+
+client.login(process.env.BOT_TOKEN);
