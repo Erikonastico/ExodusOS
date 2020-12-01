@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Bot",
   "main": "index.js",
+  "engines": {
+    "node": "12.18.3",
+    "npm": "*"
+  },
   "scripts": {
     "start": "node index.js"
   },
