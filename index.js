@@ -12,6 +12,7 @@ client.on('message', message => {
     var author_id = message.author.id;
     var randomValue = [];
     var mensagemDividida = message.content.split(" ");
+    var mensagem_especial = "";
     const operações =/[*+-/]/g;
 
     //Module - Dice Rolling//
@@ -61,8 +62,28 @@ client.on('message', message => {
         console.log(União);
         União = eval(União);
         console.log(União);
-        
-        message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + mensagemDividida[1] + ') = '+ União + '\nValores Individuais: [' + randomValue + ']```');
+
+        //Comparações//
+        let Comparações = mensagemDividida[2];
+        if (Comparações != undefined) {
+        Comparações = Comparações.replace(/>=/g, " >= ");
+        Comparações = Comparações.replace(/<=/g, " <= ");
+        Comparações = Comparações.replace(/[>]/g, " > ");
+        Comparações = Comparações.replace(/[<]/g, " < ");
+        ComparaçõesFinal = Comparações.split(" ");
+        ComparaçõesFinal.shift();
+        ComparaçõesFinal.unshift(União);
+        let ComparaçõesFinal2 = "";
+        for (i = 0; i < ComparaçõesFinal.length; ++i) {
+            ComparaçõesFinal2 += ComparaçõesFinal[i];
+        }
+        console.log(ComparaçõesFinal2);
+        ComparaçõesFinal2 = "if (" + ComparaçõesFinal2 + ') { ComparaçõesFinal2 = "Verdadeira" } else { ComparaçõesFinal2 = "Falsa" }';
+        eval(ComparaçõesFinal2);
+        console.log(ComparaçõesFinal2);
+        mensagem_especial += "A expressão verificada é " + ComparaçõesFinal2 + ".";
+        }
+        message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + mensagemDividida[1] + ') = '+ União + '\nValores Individuais: [' + randomValue + ']\nOperações Especiais: ' + mensagem_especial + '```');
     }
 
     //Funções//
