@@ -10,26 +10,59 @@ client.once('ready', () => {
 client.on('message', message => {
     //Variable Declaration//
     var author_id = message.author.id;
-    var saved = '';
     var randomValue = [];
-    const user = message.mentions.users.first();
-    /*Mensagem Dividida é a divisão das palavras contidas no conteudo da mensagem.
-    Mensagem Dividida[0] = Primeira Palavra.
-    Mensagem Dividida[1] = Segunda Palavra.*/
     var mensagemDividida = message.content.split(" ");
+    const operações =/[*+-/]/g;
 
+    //Module - Dice Rolling//
 	if (mensagemDividida[0] === '!roll') {
-        if (mensagemDividida[1][0] === 'd') {
-            message.channel.send("Por favor, informe o numero de dados a serem jogados.");
+        let Instruções = mensagemDividida[1].split("d");
+         //Se começar com d//
+         if (mensagemDividida[1][0] === 'd') {
+            Instruções.shift();
+            Instruções.unshift("1");
+            console.log(Instruções);
         }
-        else {
-            let Instruções = mensagemDividida[1].split("d");
-            randomValue = randomGenerating(Instruções[1], Instruções[0]);
-            if (typeof randomValue != "undefined") {
-                message.delete({timeout: 1000})
-                message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```\nRolagem: ' + mensagemDividida[1] + ' [' + arraySum(randomValue) + ']\nValores Individuais: ' + randomValue + '```');
-            }  
+        //Tratamento de Operações//
+        console.log(Instruções[1]);
+        Instruções[1] = Instruções[1].replace(/[+]/g, " + ");
+        Instruções[1] = Instruções[1].replace(/[-]/g, " - ");
+        Instruções[1] = Instruções[1].replace(/[*]/g, " * ");
+        Instruções[1] = Instruções[1].replace(/[/]/g, " / ");
+        let Dado = Instruções[1].split(" ");
+        Dado.unshift(Instruções[0]);
+        console.log("Antes da rolagem: " + Dado);
+
+        //Execução da Rolagem//
+        randomValue = randomGenerating(Dado[1], Dado[0]);
+        if (typeof randomValue != "undefined") {
+            message.delete({timeout: 1000})  
         }
+
+        //Soma//
+        Sum = arraySum(randomValue);
+
+        //Rearranjo//
+        for (i = 1; i < randomValue.length; ++i) {
+            randomValue[i] = " " + randomValue[i];
+        }
+        console.log(randomValue);        
+        //Rearrumação de mensagemDividida//
+        let Valor_Dado = Dado[1];
+        Dado[1] = Sum;
+        Dado.shift();
+        console.log("Depois da rolagem: " + Dado);
+
+        //União das Arrays//
+        let União = "";
+        for (i = 0; i < Dado.length; ++i) {
+            União += Dado[i] + " ";
+        }
+        console.log(União);
+        União = eval(União);
+        console.log(União);
+        
+        message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + mensagemDividida[1] + ') = '+ União + '\nValores Individuais: [' + randomValue + ']```');
     }
 
     //Funções//
@@ -46,7 +79,26 @@ client.on('message', message => {
             sum += value[i-1];    
         }
         return sum;
-    }        
+    }
+    function arrayOrganize(value) {
+        let organize;
+        for (i = value.length; i > 0; --i) {
+            if (value[i-1] > value[i]) {
+                organize = value[i];
+                value[i-1] = value[i];
+                value[i-1] = organize;
+            }
+        }
+        return value;
+    }
+    function arrayNoSpaces(value) {
+        for (i = value.length; i > 0; --i) {
+            for (j = value[i].length; j > 0; --j) {
+                if (value[i].length = " ") {
+                    
+                }
+            }
+        }
+    }
 })
-
 client.login();
