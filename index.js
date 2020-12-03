@@ -17,6 +17,7 @@ client.on('message', message => {
 
     //Module - Dice Rolling//
 	if (mensagemDividida[0] === '!roll') {
+	message.delete({timeout: 100});  
         let Instruções = mensagemDividida[1].split("d");
         if (Instruções[0] <= 200) {
          //Se começar com d//
@@ -37,10 +38,7 @@ client.on('message', message => {
 
         //Execução da Rolagem//
         randomValue = randomGenerating(Dado[1], Dado[0]);
-        if (typeof randomValue != "undefined") {
-            message.delete({timeout: 100})  
-        }
-
+     
         //Soma//
         Sum = arraySum(randomValue);
 
