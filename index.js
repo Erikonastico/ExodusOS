@@ -18,6 +18,7 @@ client.on('message', message => {
     //Module - Dice Rolling//
 	if (mensagemDividida[0] === '!roll') {
         let Instruções = mensagemDividida[1].split("d");
+        if (Instruções[0] <= 200) {
          //Se começar com d//
          if (mensagemDividida[1][0] === 'd') {
             Instruções.shift();
@@ -104,6 +105,10 @@ client.on('message', message => {
         }
         message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + mensagemDividida[1] + ') = '+ União + '\nValores Individuais: [' + randomValue + ']\nOperações Especiais: ' + mensagem_especial + '```');
     }
+    else {
+        message.channel.send("*Na rolagem normal, só aceitamos rolar de 1 à 200 dados. Tente novamente.*")
+    }
+}
 
     //Funções//
     function randomGenerating(dice, number) {
