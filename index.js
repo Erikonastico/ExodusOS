@@ -77,11 +77,12 @@ client.on('message', message => {
         for (i = 0; i < ComparaçõesFinal.length; ++i) {
             ComparaçõesFinal2 += ComparaçõesFinal[i];
         }
+        ComparaçõesExpressão = ComparaçõesFinal2;
         console.log(ComparaçõesFinal2);
         ComparaçõesFinal2 = "if (" + ComparaçõesFinal2 + ') { ComparaçõesFinal2 = "Verdadeira" } else { ComparaçõesFinal2 = "Falsa" }';
         eval(ComparaçõesFinal2);
         console.log(ComparaçõesFinal2);
-        mensagem_especial += "A expressão verificada é " + ComparaçõesFinal2 + ".";
+        mensagem_especial += "A expressão verificada (" + ComparaçõesExpressão + ") é " + ComparaçõesFinal2 + ".";
         }
         message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + mensagemDividida[1] + ') = '+ União + '\nValores Individuais: [' + randomValue + ']\nOperações Especiais: ' + mensagem_especial + '```');
     }
