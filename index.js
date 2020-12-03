@@ -37,7 +37,7 @@ client.on('message', message => {
         //Execução da Rolagem//
         randomValue = randomGenerating(Dado[1], Dado[0]);
         if (typeof randomValue != "undefined") {
-            message.delete({timeout: 1000})  
+            message.delete({timeout: 100})  
         }
 
         //Soma//
@@ -63,26 +63,44 @@ client.on('message', message => {
         União = eval(União);
         console.log(União);
 
-        //Comparações//
-        let Comparações = mensagemDividida[2];
-        if (Comparações != undefined) {
-        Comparações = Comparações.replace(/>=/g, " >= ");
-        Comparações = Comparações.replace(/<=/g, " <= ");
-        Comparações = Comparações.replace(/[>]/g, " > ");
-        Comparações = Comparações.replace(/[<]/g, " < ");
-        ComparaçõesFinal = Comparações.split(" ");
+        //Central of Operations//
+        //Funções Locais//
+        function array_media (array, soma_array) {
+            media = soma_array/array.length;
+            mensagem_especial += "\nA media entre as rolagens é: " + media + ";"; 
+        }
+
+        function comparação (valor) {
+        valor = valor.replace(/>=/g, " >= ");
+        valor = valor.replace(/<=/g, " <= ");
+        valor = valor.replace(/[>]/g, " > ");
+        valor = valor.replace(/[<]/g, " < ");
+        let ComparaçõesFinal = valor.split(" ");
+        let ComparaçõesFinal2 = "";
         ComparaçõesFinal.shift();
         ComparaçõesFinal.unshift(União);
-        let ComparaçõesFinal2 = "";
-        for (i = 0; i < ComparaçõesFinal.length; ++i) {
-            ComparaçõesFinal2 += ComparaçõesFinal[i];
+        for (j = 0; j < ComparaçõesFinal.length; ++j) {
+            ComparaçõesFinal2 += ComparaçõesFinal[j];
         }
         ComparaçõesExpressão = ComparaçõesFinal2;
         console.log(ComparaçõesFinal2);
         ComparaçõesFinal2 = "if (" + ComparaçõesFinal2 + ') { ComparaçõesFinal2 = "Verdadeira" } else { ComparaçõesFinal2 = "Falsa" }';
         eval(ComparaçõesFinal2);
         console.log(ComparaçõesFinal2);
-        mensagem_especial += "A expressão verificada (" + ComparaçõesExpressão + ") é " + ComparaçõesFinal2 + ".";
+        mensagem_especial += "\nA expressão verificada (" + ComparaçõesExpressão + ") é " + ComparaçõesFinal2 + ";"; 
+        }
+
+        //Central//
+        for (i = 2; i < mensagemDividida.length; ++i) {
+            console.log("Passou por aqui.");
+            if (mensagemDividida[i] === 'media') {
+                console.log("Media: " + mensagemDividida.length);
+                array_media(randomValue,Sum);
+            }
+            else {
+                console.log("Comparação: " + mensagemDividida.length);
+                comparação(mensagemDividida[i]);
+            }
         }
         message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + mensagemDividida[1] + ') = '+ União + '\nValores Individuais: [' + randomValue + ']\nOperações Especiais: ' + mensagem_especial + '```');
     }
@@ -101,26 +119,6 @@ client.on('message', message => {
             sum += value[i-1];    
         }
         return sum;
-    }
-    function arrayOrganize(value) {
-        let organize;
-        for (i = value.length; i > 0; --i) {
-            if (value[i-1] > value[i]) {
-                organize = value[i];
-                value[i-1] = value[i];
-                value[i-1] = organize;
-            }
-        }
-        return value;
-    }
-    function arrayNoSpaces(value) {
-        for (i = value.length; i > 0; --i) {
-            for (j = value[i].length; j > 0; --j) {
-                if (value[i].length = " ") {
-                    
-                }
-            }
-        }
     }
 })
 client.login();
