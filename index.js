@@ -16,6 +16,7 @@ client.on('message', message => {
     var specialMessage = "";
     var flag = [];
     var flag_adv = [];
+    var flag_haveOperations = 0;
     var additionalValue = [];
     const operations = /[*+-/]/g;
 
@@ -196,17 +197,25 @@ client.on('message', message => {
 
         //Central de Execução//
         for (i = 2; i < splitedMessage.length; ++i) {
-            console.log("Passou por aqui.");
             if (splitedMessage[i] === 'media') {
+                flag_haveOperations = 1;
                 console.log("Media: " + splitedMessage.length);
                 array_media(randomValue,Sum);
             }
             else {
+                flag_haveOperations = 1;
                 console.log("Comparação: " + splitedMessage.length);
                 comparação(splitedMessage[i]);
             }
         }
-        message.channel.send(`**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]\nOperações Especiais: ' + specialMessage + '```');
+        let messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]'
+        if (flag_haveOperations == 1) {
+            messagetoSend += "\nOperações Especiais: ' + specialMessage + '```";
+        }
+        else {
+            messageToSend += "```";
+        }
+        message.channel.send(messageToSend);
     }
     else {
         message.channel.send("*Na rolagem normal, só aceitamos rolar de 1 à 200 dados. Tente novamente.*")
