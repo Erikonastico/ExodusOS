@@ -210,7 +210,7 @@ client.on('message', message => {
         }
         let messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]';
         if (flag_haveOperations == 1) {
-            messageToSend += "\nOperações Especiais: ' + specialMessage + '```";
+            messageToSend += '\nOperações Especiais:' + specialMessage + '```';
         }
         else {
             messageToSend += "```";
