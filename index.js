@@ -6,6 +6,7 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
+//Hello//
 //Command Reciever//
 client.on('message', message => {
 
@@ -16,6 +17,7 @@ client.on('message', message => {
     var specialMessage = "";
     var flag = [];
     var flag_adv = [];
+    var flag_advAnotation = 0;
     var flag_haveOperations = 0;
     var additionalValue = [];
     const operations = /[*+-/]/g;
@@ -39,6 +41,7 @@ client.on('message', message => {
 
         //Advantage | Disadvantage Handler//
         if (Desvantagem[1] != undefined) {
+            flag_advAnotation = 1;
             console.log("Desvantagem");
             Desvantagem[1] = Desvantagem[1].replace(operations," ");
             DesvantagemImportante = Desvantagem[1];
@@ -49,7 +52,8 @@ client.on('message', message => {
             Desvantagem[1] = DesvantagemImportante;
         }
         else {
-            if (Vantagem[1] != undefined) { 
+            if (Vantagem[1] != undefined) {
+                flag_advAnotation = 1; 
               console.log("Vantagem");
                 Vantagem[1] = Vantagem[1].replace(operations," ");
                 VantagemImportante = Vantagem[1];
@@ -145,8 +149,10 @@ client.on('message', message => {
         //Array of previous calculated functions//
         let Junction = "";
         for (i = 0; i < Dado.length; ++i) {
-            if (i != 1) {
-            Junction += Dado[i] + " ";
+            if (flag_advAnotation == 1 && i == 1) { 
+            }
+            else {
+            Junction += Dado[i] + " "; 
             }
         }
         console.log("Hello: " + Junction);
@@ -157,7 +163,7 @@ client.on('message', message => {
             Junction.unshift('(');
             Junction = Junction.join('');
             }
-
+        console.log("Teste: " + Junction);
         Junction = eval(Junction);
 
         //Verificação de Operações Adicionais//
@@ -165,7 +171,7 @@ client.on('message', message => {
 
         //Media//
         function array_media (array, soma_array) {
-            media = soma_array/array.length;
+            media = soma_array/array;
             specialMessage += "\nA media entre as rolagens é: " + media + ";"; 
         }
 
@@ -200,7 +206,7 @@ client.on('message', message => {
             if (splitedMessage[i] === 'media') {
                 flag_haveOperations = 1;
                 console.log("Media: " + splitedMessage.length);
-                array_media(randomValue,Sum);
+                array_media(randomValue.length-additionalValue.length,Sum);
             }
             else {
                 flag_haveOperations = 1;
