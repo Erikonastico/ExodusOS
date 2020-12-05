@@ -208,9 +208,9 @@ client.on('message', message => {
                 comparação(splitedMessage[i]);
             }
         }
-        let messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]'
+        let messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]';
         if (flag_haveOperations == 1) {
-            messagetoSend += "\nOperações Especiais: ' + specialMessage + '```";
+            messageToSend += "\nOperações Especiais: ' + specialMessage + '```";
         }
         else {
             messageToSend += "```";
