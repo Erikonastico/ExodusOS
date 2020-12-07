@@ -256,16 +256,33 @@ client.on('message', message => {
         }
 
         //Central de Execução//
+        let Hello = [];
+        let Hello2 = [];
+        let sumArray = 0;
         for (i = 2; i < splitedMessage.length; ++i) {
+            Hello = splitedMessage[i].match(/>/g);
+            Hello2 = splitedMessage[i].match(/</g);
             if (splitedMessage[i] === 'media') {
                 flag_haveOperations = 1;
                 console.log("Media: " + splitedMessage.length);
                 array_media(randomValue.length-additionalValue.length,Sum);
             }
-            else if (splitedMessage[i][0] == ">" || splitedMessage[i][0] == "<") {
-                flag_haveOperations = 1;
-                console.log("Comparação: " + splitedMessage.length);
-                comparação(splitedMessage[i]);
+            else if (splitedMessage[i][0] == ">" || splitedMessage[i][0] == "<") {    
+                sumArray = 0;
+                if (Hello != null) {
+                    console.log("Hi!")
+                    sumArray += Hello.length;
+                }
+                if (Hello2 != null) {
+                    console.log("Hi!")
+                    sumArray += Hello2.length;
+                }
+                console.log("Preste atenção: " + sumArray);
+                   if (sumArray < 2) {
+                    flag_haveOperations = 1;
+                    console.log("Comparação: " + splitedMessage.length);
+                    comparação(splitedMessage[i]);
+                    }
             }
         }
 
