@@ -24,11 +24,22 @@ client.on('message', message => {
     var flag_advAnotation = 0;
     var flag_haveOperations = 0;
     var flag_securityChecked = 1;
+    var flag_activated = 0;
 
     //Facility Variables//
     command = splitedMessage[0];
 
     //Modules//
+
+    //Quick Dice Roller Module//
+    if (/[0-9]d[0-9]/g.test(splitedMessage[0]) == 1 && (message.author.bot == 0)) {
+        flag_activated = 1;
+        message.delete({timeout: 100});
+        console.log("Foi");
+        splitedMessage.unshift("!roll");
+        command = "!roll";
+    }
+
 
     //Dice Roller Module//
 	if (command === '!roll') {
@@ -374,5 +385,4 @@ if (command === '!conquista') {
         console.log(Number(value));
         return value;
     }
-})
 client.login();
