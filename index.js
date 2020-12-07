@@ -285,33 +285,64 @@ if (command === '!conquista') {
         color_value: ["#fffffe", "#037ffc", "#6d38f6", "#ffc737", "#ff7300", "#bbbcc2"]
     }
     let color_index; 
+    let flag_index = 0;
     for (i = 0; i < 6; ++i) {
         if (splitedMessage[1] == Conquista.index[i]) {
             color_index = Conquista.color_value[i];
+            flag_index = 1;
         }   
     }
-
+    if (flag_index == 0) {
+        message.channel.send("**Erro:** Você digitou um tipo de conquista que não existe.");
+    }
+    else if (flag_index == 1) {
     let Aspas = message.content.split('; ');
     console.log(Aspas);
     const Embed = new Discord.MessageEmbed()
-        .setColor(color_index)
-        .setTitle(Aspas[1])
-        .setDescription(Aspas[2])
-        .setFooter(Aspas[3] + `\nMestre: ${message.author.username}`);
+    .setColor(color_index);
+    for (i = 1; i < Aspas.length; ++i) {
+        switch(i) {
+            case 1:
+                Embed.setTitle(Aspas[i]);
+            break;
+            case 2:
+                Embed.setDescription(Aspas[i]);
+            break;
+            case 3:
+                Embed.setFooter(Aspas[3] + `\nMestre: ${message.author.username}`);
+        }
+    }   
     if (Aspas.length > 4) {
-        for (i = 4; i < Aspas.length; ++i) {
-            Aspas2 = Aspas[i].split(', ');
+        let AspasTamanho = Aspas.length;
+        if (/image/g.test(Aspas[AspasTamanho]) == 0) {
+            --AspasTamanho;
+        }
+        for (i = 4; i < AspasTamanho; ++i) {
+            Aspas2 = Aspas[i].split('(');
+            Aspas2.shift();
+            console.log(Aspas2);
+            for (j = 0; j < 3; ++j) {
+                if (Aspas2[j] != undefined) {
+                    Aspas2[j] = Aspas2[j].replace(/[)]/g, "");
+                    console.log(Aspas2);
+                    }
+                }
             if (Aspas2[2] != undefined) {
                 if (Aspas2[2] == "inline") {
                     Embed.addField(Aspas2[0], Aspas2[1], true);
                 }
             }
             else {
-            Embed.addField(Aspas2[0], Aspas2[1]);
-            }
+                Embed.addField(Aspas2[0], Aspas2[1]);
+                }
         }
     }
+    Aspas3 = message.content.split(/image=/);
+    if (Aspas3.length > 1) {
+        Embed.setImage(Aspas3[1]);
+    }
     message.channel.send(Embed);
+}
 }
 
     //Funções Auxiliares//
