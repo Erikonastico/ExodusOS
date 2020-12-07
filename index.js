@@ -283,23 +283,23 @@ client.on('message', message => {
                     if (flag_complexity == 1) {
                         messageToSend += '\nOperações Especiais:' + specialMessage;
                     }
-                    else {
+                    else if (flag_complexity == 0) {
                         messageToSend += specialMessage;
+                    }
+                    else {
+                        message.channel.send("Estado de variavel estranho. Você deve ter feito algo errado.");
                     }
                     message.channel.send(messageToSend);
                 }
-                else {
-                    message.channel.send("Estado de variavel estranho. Você deve ter feito algo errado.");
-                }
-            }
-                if (flag_complexity == 1) {
+                else if (flag_complexity == 1) {
                     messageToSend += "```";
                     message.channel.send(messageToSend);
                 }
                 else {
                     message.channel.send(messageToSend);
                 }
-        }
+            }
+        }     
         else {
             message.channel.send("**Erro:** Na rolagem normal, dados acima de 1000 faces não são permitidos. Tente novamente.");
         }
