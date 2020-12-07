@@ -299,7 +299,7 @@ client.on('message', message => {
                 }
                 else if (flag_haveOperations == 1) {
                     if (flag_complexity == 1) {
-                        messageToSend += '\nOperações Especiais:' + specialMessage;
+                        messageToSend += '\nOperações Especiais:' + specialMessage + "```";
                     }
                     else if (flag_complexity == 0) {
                         messageToSend += specialMessage;
