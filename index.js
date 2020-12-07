@@ -385,4 +385,5 @@ if (command === '!conquista') {
         console.log(Number(value));
         return value;
     }
+})
 client.login();
