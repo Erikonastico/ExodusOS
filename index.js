@@ -277,7 +277,7 @@ else {
     message.channel.send("**Erro:** Na rolagem normal, só aceitamos rolar de 1 à 200 dados. Tente novamente.");
 }
         }
-
+    }
 //Modulo - Conquista//
 if (command === '!conquista') {
     const Conquista = {
@@ -298,7 +298,19 @@ if (command === '!conquista') {
         .setTitle(Aspas[1])
         .setDescription(Aspas[2])
         .setFooter(Aspas[3] + `\nMestre: ${message.author.username}`);
-
+    if (Aspas.length > 4) {
+        for (i = 4; i < Aspas.length; ++i) {
+            Aspas2 = Aspas[i].split(', ');
+            if (Aspas2[2] != undefined) {
+                if (Aspas2[2] == "inline") {
+                    Embed.addField(Aspas2[0], Aspas2[1], true);
+                }
+            }
+            else {
+            Embed.addField(Aspas2[0], Aspas2[1]);
+            }
+        }
+    }
     message.channel.send(Embed);
 }
 
@@ -330,7 +342,6 @@ if (command === '!conquista') {
         }
         console.log(Number(value));
         return value;
-    }
     }
 })
 client.login();
