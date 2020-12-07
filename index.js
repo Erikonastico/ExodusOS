@@ -25,6 +25,7 @@ client.on('message', message => {
     var flag_haveOperations = 0;
     var flag_securityChecked = 1;
     var flag_activated = 0;
+    var flag_complexity = 1;
 
     //Facility Variables//
     command = splitedMessage[0];
@@ -38,6 +39,7 @@ client.on('message', message => {
         console.log("Foi");
         splitedMessage.unshift("!roll");
         command = "!roll";
+        var flag_complexity = 0;
     }
 
     if (/!r/g.test(command) == 1 && command !== '!roll') {
@@ -46,6 +48,7 @@ client.on('message', message => {
         splitedMessage = message.content.split(" ");
         command = splitedMessage[0];
         console.log("Olá, senhores. " + splitedMessage);
+        var flag_complexity = 0;
     }
 
     //Dice Roller Module//
@@ -269,23 +272,32 @@ client.on('message', message => {
         }
 
         //Additional Problem Handler//
-            let messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]';
+            if (flag_complexity == 1) {
+            var messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]';
+            }
+            else 
+            var messageToSend = `<@${author_id}> rolou ${splitedMessage[1]} [${Junction}]`
             if (typeof(splitedMessage[2]) != "undefined") {
                 if (flag_haveOperations == 0) {
                     message.channel.send("**Erro:** Você colocou uma operação não existente. Tente digitar operações validas como 'media'."); 
                 }
                 else if (flag_haveOperations == 1) {
-                    messageToSend += '\nOperações Especiais:' + specialMessage + '```';
+                    if (flag_complexity == 1) {
+                        messageToSend += '\nOperações Especiais:' + specialMessage;
+                    }
+                    else {
+                        messageToSend += specialMessage;
+                    }
                     message.channel.send(messageToSend);
                 }
                 else {
                     message.channel.send("Estado de variavel estranho. Você deve ter feito algo errado.");
                 }
             }
-            else {
+                if (flag_complexity == 1) {
                 messageToSend += "```";
                 message.channel.send(messageToSend);
-            }
+                }
         }
         else {
             message.channel.send("**Erro:** Na rolagem normal, dados acima de 1000 faces não são permitidos. Tente novamente.");
