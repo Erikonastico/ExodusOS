@@ -273,7 +273,7 @@ client.on('message', message => {
             if (flag_complexity == 1) {
             var messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]';
             }
-            else 
+            else {
             var messageToSend = `<@${author_id}> rolou ${splitedMessage[1]} [${Junction}]`
             if (typeof(splitedMessage[2]) != "undefined") {
                 if (flag_haveOperations == 0) {
@@ -287,18 +287,23 @@ client.on('message', message => {
                         messageToSend += specialMessage;
                     }
                     else {
+                        console.log("Enviou");
                         message.channel.send("Estado de variavel estranho. Você deve ter feito algo errado.");
                     }
+                    console.log("Enviou");
                     message.channel.send(messageToSend);
                 }
+                }
                 else if (flag_complexity == 1) {
+                    console.log("Enviou");
                     messageToSend += "```";
                     message.channel.send(messageToSend);
                 }
                 else {
+                    console.log("Enviou");
                     message.channel.send(messageToSend);
                 }
-            }
+        }
         }     
         else {
             message.channel.send("**Erro:** Na rolagem normal, dados acima de 1000 faces não são permitidos. Tente novamente.");
