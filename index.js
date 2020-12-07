@@ -275,6 +275,7 @@ client.on('message', message => {
             }
             else {
             var messageToSend = `<@${author_id}> rolou ${splitedMessage[1]} [${Junction}]`
+            }
             if (typeof(splitedMessage[2]) != "undefined") {
                 if (flag_haveOperations == 0) {
                     message.channel.send("**Erro:** Você colocou uma operação não existente. Tente digitar operações validas como 'media'."); 
@@ -303,7 +304,6 @@ client.on('message', message => {
                     console.log("Enviou");
                     message.channel.send(messageToSend);
                 }
-        }
         }     
         else {
             message.channel.send("**Erro:** Na rolagem normal, dados acima de 1000 faces não são permitidos. Tente novamente.");
