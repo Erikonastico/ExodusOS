@@ -362,4 +362,35 @@ if (command === '!conquista') {
     message.channel.send(Embed);
 }
 }
+
+    //Funções Auxiliares//
+    function randomGenerating(dice, number) {
+        let array = [];
+            for (number; number > 0; --number) {
+                array[number-1] = Number(Math.floor((Math.random() * dice) + 1));
+            }
+        return array;
+    }
+    function arraySum(value) {
+        let sum = 0;
+        for (i = value.length; i > 0; --i) {
+            sum += value[i-1];    
+        }
+        return sum;
+    }
+    function arrayOrganize(value) {
+        let medium = 0;
+        for (i = 0; i < value.length; ++i) {
+            for (j = 0; j < value.length; ++j) {
+                if (value[i] > value[j]) {
+                    medium = Number(value[i]);
+                    value[i] = Number(value[j]);
+                    value[j] = Number(medium);
+                }
+            }
+        }
+        console.log(Number(value));
+        return value;
+    }
+})
 client.login();
