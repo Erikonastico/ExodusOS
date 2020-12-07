@@ -15,12 +15,15 @@ client.on('message', message => {
     var randomValue = [];
     var splitedMessage = message.content.split(" ");
     var specialMessage = "";
+    var additionalValue = [];
+    const operations = /[*+-/]/g;
+
+    //Flags//
     var flag = [];
     var flag_adv = [];
     var flag_advAnotation = 0;
     var flag_haveOperations = 0;
-    var additionalValue = [];
-    const operations = /[*+-/]/g;
+    var flag_securityChecked = 1;
 
     //Facility Variables//
     command = splitedMessage[0];
@@ -31,13 +34,44 @@ client.on('message', message => {
 	if (command === '!roll') {
 
         message.delete({timeout: 100});
-
+        
         //Message Content Handler//
         let Instruções = splitedMessage[1].split("d");
+        let Desvantagem = splitedMessage[1].split("uk");     
+        let Vantagem = splitedMessage[1].split("k"); 
+
+        //Restrictions//
+        if (/d/g.test(splitedMessage[1]) == 0) {
+            flag_securityChecked = 0;
+            message.channel.send("**Erro:** Use a notação de rolagem (1d20).");
+        }
+        if (/k/g.test(splitedMessage[1]) == 1) {
+            if (splitedMessage[1].search('k') < splitedMessage[1].search('d')) {
+                flag_securityChecked = 0;
+                message.channel.send("**Erro:** Coloque o atributo de vantagem/desvantagem depois do atributo de rolagem (1d20k2, não k21d20 ou 1k2d20).");
+            }
+        }
+        if (/[abcefghijlmnopqrstuvwyxz]/g.test(splitedMessage[1]) == 1) {
+            if (/uk/g.test(splitedMessage[1]) != 1) {
+            flag_securityChecked = 0;
+            message.channel.send("**Erro:** Existem outras letras alem de d, k e u.");
+            }
+        }
+        if (Vantagem != splitedMessage[1]) {
+            if (Vantagem.length > 2) {
+                flag_securityChecked = 0;
+                message.channel.send("**Erro:** Só use um modificador de Vantagem/Desvantagem (2d20k1, e não 2d20k1k1).")
+            }
+            if (operations.test(Vantagem[0]) == 1) {
+                flag_securityChecked = 0;
+                message.channel.send("**Erro:** Por favor, coloque o operador de Vantagem/Desvantagem junto do de rolagem.");
+            }
+        }
+
+        if (flag_securityChecked == 1) {
+        //Message Additional Handler//
         Instruções[1] = Instruções[1].replace(/uk/, " ");
         Instruções[1] = Instruções[1].replace(/k/, " ");
-        let Desvantagem = splitedMessage[1].split("uk");     
-        let Vantagem = splitedMessage[1].split("k");
 
         //Advantage | Disadvantage Handler//
         if (Desvantagem[1] != undefined) {
@@ -104,6 +138,7 @@ client.on('message', message => {
         Dado.unshift(Instruções[0]);
 
         //Dice Rolling//
+        if (Dado[1] <= 1000) { 
         randomValue = randomGenerating(Dado[1], Dado[0]);
         console.log(randomValue);
 
@@ -208,25 +243,40 @@ client.on('message', message => {
                 console.log("Media: " + splitedMessage.length);
                 array_media(randomValue.length-additionalValue.length,Sum);
             }
-            else {
+            else if (splitedMessage[i][0] == ">" || splitedMessage[i][0] == "<") {
                 flag_haveOperations = 1;
                 console.log("Comparação: " + splitedMessage.length);
                 comparação(splitedMessage[i]);
             }
         }
-        let messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]';
-        if (flag_haveOperations == 1) {
-            messageToSend += '\nOperações Especiais:' + specialMessage + '```';
+
+        //Additional Problem Handler//
+            let messageToSend = `**A rolagem foi concluida, <@${author_id}>` + '.**\n```bash\nRolagem: ' + Instruções[0] + 'd' + Valor_Dado + ' = [' + Sum + ']\nValor com Operadores (' + splitedMessage[1] + ') = '+ Junction + '\nValores Individuais: [' + randomValue + ' ]';
+            if (typeof(splitedMessage[2]) != "undefined") {
+                if (flag_haveOperations == 0) {
+                    message.channel.send("**Erro:** Você colocou uma operação não existente. Tente digitar operações validas como 'media'."); 
+                }
+                else if (flag_haveOperations == 1) {
+                    messageToSend += '\nOperações Especiais:' + specialMessage + '```';
+                    message.channel.send(messageToSend);
+                }
+                else {
+                    message.channel.send("Estado de variavel estranho. Você deve ter feito algo errado.");
+                }
+            }
+            else {
+                messageToSend += "```";
+                message.channel.send(messageToSend);
+            }
         }
         else {
-            messageToSend += "```";
+            message.channel.send("**Erro:** Na rolagem normal, dados acima de 1000 faces não são permitidos. Tente novamente.");
         }
-        message.channel.send(messageToSend);
-    }
-    else {
-        message.channel.send("*Na rolagem normal, só aceitamos rolar de 1 à 200 dados. Tente novamente.*")
-    }
 }
+else {
+    message.channel.send("**Erro:** Na rolagem normal, só aceitamos rolar de 1 à 200 dados. Tente novamente.");
+}
+        }
 
 //Modulo - Conquista//
 if (command === '!conquista') {
@@ -280,6 +330,7 @@ if (command === '!conquista') {
         }
         console.log(Number(value));
         return value;
+    }
     }
 })
 client.login();
