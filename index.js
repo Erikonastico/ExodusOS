@@ -6,7 +6,6 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
-//Hello//
 //Command Reciever//
 client.on('message', message => {
 
@@ -35,7 +34,6 @@ client.on('message', message => {
     //Quick Dice Roller Module//
     if (/[0-9]d[0-9]/g.test(splitedMessage[0]) == 1 && (message.author.bot == 0)) {
         flag_activated = 1;
-        message.delete({timeout: 100});
         console.log("Foi");
         splitedMessage.unshift("!roll");
         command = "!roll";
@@ -295,8 +293,11 @@ client.on('message', message => {
                 }
             }
                 if (flag_complexity == 1) {
-                messageToSend += "```";
-                message.channel.send(messageToSend);
+                    messageToSend += "```";
+                    message.channel.send(messageToSend);
+                }
+                else {
+                    message.channel.send(messageToSend);
                 }
         }
         else {
