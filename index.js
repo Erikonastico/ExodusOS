@@ -9,7 +9,14 @@ client.once('ready', () => {
 //Command Reciever//
 client.on('message', message => {
 
+    //Admin//
+    var admin = "619503488057212958";
+    if (message.author.id == admin) {
+        admin = 1;
+    }
+
     //Global Variables//
+	
     var author_id = message.author.id;
     var randomValue = [];
     var splitedMessage = message.content.split(" ");
@@ -331,6 +338,7 @@ else {
 }
         }
     }
+
 //Modulo - Conquista//
 if (command === '!conquista') {
     const Conquista = {
@@ -397,6 +405,44 @@ if (command === '!conquista') {
     message.channel.send(Embed);
 }
 }
+
+    //Webhook Module//
+    async function WebhookOperator(message, webhookMessage, webhookName) {
+        const channel_to_go = message.channel;
+        const webhook = await client.fetchWebhook("774245779903873066", "PXWptLKsTX8c8RJRifH28i8qAZvlY139wRVnlpJNsx4s8uiv7st8vSh2Bl3mQL9FrDLm");
+        let index = webhooks.type.indexOf(webhookName);
+        if (index == -1) {
+            if (/NPC=/g.test(webhookName) == 1) {
+                index = 0;
+                webhookName = webhookName.replace(/NPC=/g, "");
+                console.log(webhookName);
+            }
+        }
+        if (index != -1) {
+            var webhookImage = webhooks.image_links[index];
+        }
+        await webhook.edit({
+            name: webhookName,
+            avatar: webhookImage,
+            channel: channel_to_go
+        });
+        await webhook.send(webhookMessage);
+    }
+
+    const webhooks = {
+        type: ["NPC", "Exodus", "Solaris", "Mercurio", "Terra", "Eldunari", "Kindergarten"],
+        image_links: ["https://cdn.discordapp.com/attachments/752322158386085978/785909310030741533/Exodus2.png", 
+        "https://cdn.discordapp.com/attachments/752322158386085978/785909310030741533/Exodus2.png", "https://cdn.discordapp.com/attachments/752322158386085978/785910105257410640/Solaris.png",
+        "https://cdn.discordapp.com/attachments/752322158386085978/785911058023317524/Mercurio.png", "https://cdn.discordapp.com/attachments/702624141173588069/780556161874133002/Sem_Titulo-2.png",
+        "https://cdn.discordapp.com/attachments/752322158386085978/785910168135139328/Eldunari.png", "https://cdn.discordapp.com/attachments/752322158386085978/785910136308629524/Kindergarden.png"]
+    }
+    if (/>:/g.test(command) == 1 && admin == 1) {
+        message.delete();
+        let command_array = [];
+        command_array = message.content.split(/>: /g);
+        console.log(command_array);
+        WebhookOperator(message, command_array[1], command_array[0]);
+    }
 
     //Funções Auxiliares//
     function randomGenerating(dice, number) {
