@@ -437,7 +437,7 @@ if (command === '!conquista') {
         "https://cdn.discordapp.com/attachments/752322158386085978/785910168135139328/Eldunari.png", "https://cdn.discordapp.com/attachments/752322158386085978/785910136308629524/Kindergarden.png"]
     }
     if (/>:/g.test(command) == 1 && admin == 1) {
-        message.delete();
+        message.delete({timeout: 500});
         let command_array = [];
         command_array = message.content.split(/>: /g);
         console.log(command_array);
