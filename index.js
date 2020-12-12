@@ -4,9 +4,6 @@ const client = new Discord.Client();
 const Canvas = require('canvas');
 const db = require('./db');
 
-//Discord Login//
-client.login('NzgzMDkzMDg0OTM3NTE5MTA0.X8VuRA.eGpt8VeC-KhDvB5AUQJgLw1COsU');
-
 //Third Party Code//
 //pSBC - Color Lightner|Darkner//
 // Version 4.0, made by Pimp Trizkit//
