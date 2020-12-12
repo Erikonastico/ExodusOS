@@ -2,9 +2,9 @@ async function Connect() {
     //MariaDB Login//
     const mariadb = require('mariadb');
     const pool = mariadb.createPool({
-     host: HOST,
-     user: USER, 
-     password: PASSWORD,
+     host: process.env.HOST,
+     user: process.env.USER, 
+     password: process.env.PASSWORD,
      database: 'projeto_exodus'
 });
 return pool;
