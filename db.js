@@ -5,7 +5,9 @@ async function Connect() {
      host: process.env.HOST,
      user: process.env.USER, 
      password: process.env.PASSWORD,
-     database: 'projeto_exodus'
+     database: 'projeto_exodus',
+     socketPath: 'MariaDB'
+     
 });
 return pool;
 }
