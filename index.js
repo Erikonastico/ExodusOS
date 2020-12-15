@@ -1,22 +1,61 @@
-//Login//
+//Loading//
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const Canvas = require('canvas');
+const db = require('./db');
+
+//Discord Login//
+client.login('NzgzMDkzMDg0OTM3NTE5MTA0.X8VuRA.5JaEyaGR7kTDxsiV4UJdQpwNTYU');
+
+//Third Party Code//
+//pSBC - Color Lightner|Darkner//
+// Version 4.0, made by Pimp Trizkit//
+const pSBC=(p,c0,c1,l)=>{
+	let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
+	if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
+	if(!this.pSBCr)this.pSBCr=(d)=>{
+		let n=d.length,x={};
+		if(n>9){
+			[r,g,b,a]=d=d.split(","),n=d.length;
+			if(n<3||n>4)return null;
+			x.r=i(r[3]=="a"?r.slice(5):r.slice(4)),x.g=i(g),x.b=i(b),x.a=a?parseFloat(a):-1
+		}else{
+			if(n==8||n==6||n<4)return null;
+			if(n<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(n>4?d[4]+d[4]:"");
+			d=i(d.slice(1),16);
+			if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;
+			else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1
+		}return x};
+	h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=this.pSBCr(c0),P=p<0,t=c1&&c1!="c"?this.pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
+	if(!f||!t)return null;
+	if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);
+	else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
+	a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;
+	if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
+	else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
+}
+
+//Start of Program//
 
 client.once('ready', () => {
-	console.log('Ready!');
-});
+    console.log("Started");
+    });
 
 //Command Reciever//
 client.on('message', message => {
+
+    if (message.content == "& userspecifus") {
+        message.channel.send(message.author.id);
+    }
 
     //Admin//
     var admin = "619503488057212958";
     if (message.author.id == admin) {
         admin = 1;
-    }
+    };
 
     //Global Variables//
-	
+    
     var author_id = message.author.id;
     var randomValue = [];
     var splitedMessage = message.content.split(" ");
@@ -36,15 +75,194 @@ client.on('message', message => {
     //Facility Variables//
     command = splitedMessage[0];
 
-    //Modules//
+    //Macro Modules//
 
-    //Quick Dice Roller Module//
-    if (/[0-9]d[0-9]/g.test(splitedMessage[0]) == 1 && (message.author.bot == 0)) {
-        flag_activated = 1;
-        console.log("Foi");
-        splitedMessage.unshift("!roll");
-        command = "!roll";
-        var flag_complexity = 0;
+    if (command == "!macro") {
+        (async() => {
+            const table = {
+                text: 'SELECT config_object FROM Dados WHERE user_id = $1',
+                values: [author_id]
+            }
+            let macro2 = await db.select_built (table);
+            macro_prepared = macro2.config_object.replace(/macro=/g, "");
+            console.log("Status: " + macro_prepared);
+            if (macro_prepared == 'on') {
+                message.channel.send("Sorry! No macro here. <pog>");
+                await db.update('Dados', 'config_object = \'macro=off\'', `user_id = '${author_id}'`);
+            }
+            else {
+                message.channel.send("Macro is on, buddy!");
+                await db.update('Dados', 'config_object = \'macro=on\'', `user_id = '${author_id}'`);
+            }
+        })()
+    }
+
+    //Verifier//
+    async function verify(author) {
+            const table = {
+                text: 'SELECT config_object FROM Dados WHERE user_id = $1',
+                values: [author]
+            }
+            const macro_info = await db.select_built (table);
+            if (macro_info == undefined) {
+                console.log("Register");
+                const table = {
+                    text: 'INSERT INTO Dados VALUES ($1, $2)',
+                    values: [author_id, 'macro=off']
+                }
+                await db.select_built (table);
+                message.channel.send("Seu nick não estava registrado. Agora esta!");
+            }
+            const config = macro_info.config_object;
+            if (config == "macro=on") {
+                return 1;
+            }
+            else if (config == "macro=off") {
+                return 0;
+            }
+    }
+
+    //All macro commands are inicialized with $//
+    var lmacro = 0;
+    if (command.startsWith('$') == 1 || /[0-9]d[0-9]/g.test(command) == 1) {
+        console.log(1);
+        (async () => {
+        lmacro = await verify(`${author_id}`);
+        console.log(lmacro);
+        console.log(2);
+        //Macro Commands//
+        if (lmacro == 1) {
+            if (/^\$/g.test(splitedMessage[0]) == 1) {
+                command = command.replace(/^\$/g, '!titulo');
+                message.delete({timeout: 100});
+                splitedMessage2 = message.content.split('"');
+                Zones(message, splitedMessage, splitedMessage2);
+            }
+            //Quick Dice Roller Module//
+            if (/[0-9]d[0-9]/g.test(splitedMessage[0]) == 1 && (message.author.bot == 0)) {
+                flag_activated = 1;
+                splitedMessage.unshift("!roll");
+                flag_complexity = 0;
+                Roll(message, splitedMessage, flag_complexity);
+            }
+        }
+    })()
+ }   
+
+    
+
+
+    //Sector Module//
+    async function Zones(message, splitedMessage, splitedMessage2) {
+
+        let image;
+        let color;
+        let letterColor = "#ffffff"
+        let header = "";
+        //Types of Destination//
+        const Zones = {
+            type: ["ZS", "S", "ZR", "SP", "SEX", "SET", "ZM", "SR", "SC"],
+            image: ['./Setores/Zona Segura.png', './Setores/Zona Selvagem.png', './Setores/Zona Restrita.png','./Setores/Setor Perdido.png',
+            './Setores/Setor de Exploracao.png', './Setores/Setor de Extracao.png', './Setores/Zona Morta.png', './Setores/Setor Restrito.png', 
+            './Setores/Setor Controlado.png'],
+            color: ["#2a5fcf", "#387526", "#bd7a33", "#6d55bd", "#387526", "#387526", "#8a290e", "#bd7a33", "#2a5fcf"]
+        }
+        texto = splitedMessage2[1];
+    
+        for (i = 0; i < 10; ++i) {
+            if (splitedMessage[1] == Zones.type[i]) {
+                header = Zones.type[i];
+                image = await Canvas.loadImage(Zones.image[i]);
+                color = Zones.color[i];
+                letterColor = Zones.color[i];
+                if (i == 6) {
+                    texto = "Zona Morta";
+                }
+                else {
+                break;
+                }
+            }
+        }
+    
+        //Canvas Variables//
+        let canvas = Canvas.createCanvas(1024, 188);
+        const image2 = await Canvas.loadImage('./Setores/FrameBehind.png')
+        let ctx = canvas.getContext('2d');
+        let informedwidth = 163;
+        let informedheight = 183;
+    
+        if (header == 'SC') {
+            informedwidth -= 20;
+        }
+    
+        //Resize//
+        let text, fontSize, disloc = 0, mult = 1, setter = 1, k = 0;
+        text = texto;
+        console.log(text);
+        fontSize = 70;
+        ctx.font = `${fontSize}px Georgia`;
+        console.log(ctx.measureText(text).width);
+        if (ctx.measureText(text).width + 320 > canvas.width) {
+            text = text.split('');
+            console.log(text);
+            console.log(Math.floor(text.length/2));
+            let char = text[(Math.floor(text.length/2))];
+            while (char != ' ' && (text[(Math.floor(text.length/2)+k)] != text.length)) {
+                ++k;
+                char = text[(Math.floor(text.length/2)+k)];
+                disloc = -35;
+                mult = 2;
+                setter = 0;
+                ctx.font = `${fontSize-5}px Georgia`;
+            }
+            text[(Math.floor(text.length/2)+k)] = `${char}\n`;
+            text = text.join("");
+        }
+    
+        // draw color
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+         // set composite mode
+        ctx.globalCompositeOperation = "destination-in";
+      
+        // draw image
+        ctx.drawImage(image, 80, 12, informedwidth, informedheight-18);
+    
+        //Gradient Build//
+        let gradient = ctx.createLinearGradient(0, (canvas.height/2)*mult+20, 0, (canvas.height/2)*setter);
+        gradient.addColorStop(0, pSBC(-0.25, letterColor));
+        gradient.addColorStop(1, pSBC(+0.05, letterColor));
+    
+        //Montando Texto//
+        ctx.globalCompositeOperation = "source-over";
+    
+        // Select the style that will be used to fill the text in
+        ctx.fillStyle = gradient;
+        // Actually fill the text with a solid color
+    
+        ctx.fillText(text, 325, canvas.height/2+20+disloc);
+    
+        //Line Draw//
+        ctx.lineWidth = 12;
+        // First path
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.moveTo(291, 0);
+        ctx.lineTo(291, 188);
+        ctx.stroke();
+    
+        //drawing//
+        ctx.drawImage(image2, 20, 0, canvas.width-20, canvas.height);
+    
+        const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'Setor.png');
+        message.channel.send(attachment);
+    }
+
+    if (command === '!titulo') {
+        message.delete({timeout: 100});
+        splitedMessage2 = message.content.split('"');
+        Zones(message, splitedMessage, splitedMessage2);
     }
 
     if (/!r/g.test(command) == 1 && command !== '!roll') {
@@ -53,14 +271,17 @@ client.on('message', message => {
         splitedMessage = message.content.split(" ");
         command = splitedMessage[0];
         console.log("Olá, senhores. " + splitedMessage);
-        var flag_complexity = 0;
+        flag_complexity = 0;
     }
-
+ 
     //Dice Roller Module//
 	if (command === '!roll') {
-
         message.delete({timeout: 100});
-        
+        Roll(message, splitedMessage, flag_complexity);
+    }
+
+    //Core//
+    function Roll(message, splitedMessage, flag_complexity) {
         //Message Content Handler//
         let Instruções = splitedMessage[1].split("d");
         let Desvantagem = splitedMessage[1].split("uk");     
@@ -437,7 +658,7 @@ if (command === '!conquista') {
         "https://cdn.discordapp.com/attachments/752322158386085978/785910168135139328/Eldunari.png", "https://cdn.discordapp.com/attachments/752322158386085978/785910136308629524/Kindergarden.png"]
     }
     if (/>:/g.test(command) == 1 && admin == 1) {
-        message.delete({timeout: 500});
+        message.delete();
         let command_array = [];
         command_array = message.content.split(/>: /g);
         console.log(command_array);
@@ -474,4 +695,3 @@ if (command === '!conquista') {
         return value;
     }
 })
-client.login();
