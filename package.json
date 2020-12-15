@@ -4,6 +4,13 @@
   "description": "Bot",
   "main": "index.js",
   "author": "Erik",
+  "engines": {
+    "node": "12.18.3",
+    "npm": "*"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "discord.js": "^12.5.1",
     "canvas": "^2.6.1",
