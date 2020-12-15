@@ -110,6 +110,7 @@ client.on('message', message => {
                 }
                 await db.select_built (table);
                 message.channel.send("Seu nick não estava registrado. Agora esta!");
+		message.channel.send("Use !macro para poder rolar dados sem !roll, e usar os comandos de macro ($)");
             }
             const config = macro_info.config_object;
             if (config == "macro=on") {
