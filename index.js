@@ -76,6 +76,7 @@ client.on('message', message => {
 
     if (command == "!macro") {
         (async() => {
+	message.delete({timeout: 1000});
             const table = {
                 text: 'SELECT config_object FROM Dados WHERE user_id = $1',
                 values: [author_id]
@@ -122,6 +123,7 @@ client.on('message', message => {
     //All macro commands are inicialized with $//
     var lmacro = 0;
     if (command.startsWith('$') == 1 || /[0-9]d[0-9]/g.test(command) == 1) {
+	message.delete({timeout: 100});
         console.log(1);
         (async () => {
         lmacro = await verify(`${author_id}`);
@@ -131,7 +133,6 @@ client.on('message', message => {
         if (lmacro == 1) {
             if (/^\$/g.test(splitedMessage[0]) == 1) {
                 command = command.replace(/^\$/g, '!titulo');
-                message.delete({timeout: 100});
                 splitedMessage2 = message.content.split('"');
                 Zones(message, splitedMessage, splitedMessage2);
             }
