@@ -234,7 +234,7 @@ client.on('message', message => {
                 text: 'SELECT config_object FROM Dados WHERE user_id = $1',
                 values: [author]
             }
-            const macro_info = await db.select_built (table);
+            const macro_info = await db.select_built(table);
             if (macro_info == undefined) {
                 console.log("Register");
                 const table = {
