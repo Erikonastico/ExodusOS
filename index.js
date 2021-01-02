@@ -241,14 +241,16 @@ client.on('message', message => {
                     text: 'INSERT INTO Dados VALUES ($1, $2)',
                     values: [author_id, 'macro=off']
                 }
-                await db.select_built (table);
+                await db.select_built(table);
                 message.channel.send("Seu nick não estava registrado. Agora esta!");
             }
             const config = macro_info[0].config_object;
             if (config == "macro=on") {
+                console.log("Has macro!")
                 return 1;
             }
             else if (config == "macro=off") {
+                console.log("No macro!")
                 return 0;
             }
     }
@@ -260,15 +262,7 @@ client.on('message', message => {
         lmacro = await verify(`${author_id}`);
         //Macro Commands//
         if (lmacro == 1) {
-            if (command == "$end") {
-                if (isAdmin == 1) {;
-                    (async () => {
-                    await message.channel.send("`Finished session.");
-                    client.destroy();
-                    })()
-                }
-            }
-            else if (/^\$/g.test(splitedMessage[0]) == 1) {
+            if (/^\$/g.test(splitedMessage[0]) == 1) {
                 command = command.replace(/^\$/g, '!titulo');
                 message.delete({timeout: 100});
                 splitedMessage2 = message.content.split('"');
@@ -281,9 +275,9 @@ client.on('message', message => {
                 flag_complexity = 0;
                 Roll(message, splitedMessage, flag_complexity);
             }
-        }
-    })()
- }   
+            }
+        })()
+    }   
 
     /*Sector Module
     ---------------*/
