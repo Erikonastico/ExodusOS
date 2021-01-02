@@ -46,10 +46,28 @@ client.on('message', message => {
     }
 
     //Admin//
-    var admin = "619503488057212958";
-    if (message.author.id == admin) {
-        admin = 1;
+    const admin = ["619503488057212958", "412272950348218371", "357600192112885760"];
+    var isAdmin = 0;
+    for (i = 0; i < admin.length; ++i)  {
+       if (message.author.id == admin[i]) {
+            isAdmin = 1;
+        }
     };
+
+    if (message.content == "!end" && isAdmin == 1) {
+        function end() {
+            message.channel.send("*The end is coming! 10 seconds.*");
+            setTimeout(() => true_end(), 10000)
+        }
+        async function true_end() {
+            await message.channel.send("*End. Bot is in maintenance!*");
+            client.destroy();
+        }
+        (async() => {
+        message.channel.send("*The end is near! The bot will be inactive in 20 seconds.*");
+        setTimeout(() => end(), 10000);
+        })()
+    }
 
     //Global Variables//
     
@@ -66,17 +84,132 @@ client.on('message', message => {
     var flag_advAnotation = 0;
     var flag_haveOperations = 0;
     var flag_securityChecked = 1;
-    var flag_activated = 0;
     var flag_complexity = 1;
 
     //Facility Variables//
     command = splitedMessage[0];
 
-    //Macro Modules//
+    //Event Modules//
+    async function testando() {
+        if (setter == 0) {
+        mensagem += "```\nExodus OS <FS>\nCreated by Carlos Airen\n-----------------\n";
+        setter = 1;
+        id_mensagem = await message.channel.send(mensagem + "```");
+        }
+        else {
+        mensagem_parts = object_parts.parts[it];
+        await id_mensagem.edit(mensagem + mensagem_parts);
+        ++it;
+        console.log(it);
+        }
+        if (it > 5) {
+        console.log("Worked");
+        }
+        else {
+        setTimeout(() => testando(), object_parts.interval[it]);
+        }
+    }
+    const object_parts = {
+        parts: [">```", "> Loading sectors...```", "Sectors loaded.\n> Loading Darkness...```", "Sectors loaded.\nDarkness loaded.\n> Loading structures...```", "Sectors loaded.\nDarkness loaded.\nStructures loaded.\n> Core system loading...```", "Sectors loaded.\nDarkness loaded.\nStructures loaded.\nCore system loaded.\nSystem started.```"],
+        interval: [1200, 2000, 6000, 2000, 4000, 12000]
+    }
 
+    if (command == "|repeat") {
+        (async() => {
+        await message.delete({timeout: 100});
+        setTimeout(() => testando(), 1200)
+        console.log("Terminou!");
+        })();
+    }
+
+    /*File Modules
+    ---------------*/
+
+    //Security Level: Admin//
+    let setter = 0;
+    let mensagem = "";
+    let it = 0;
+    let id_mensagem = "";
+
+    if (isAdmin == 1) {
+        
+        //Register//  
+        if (command == "|register") {
+            (async() => {
+            const id = await db.select_built('SELECT COUNT(archive_id) FROM Arquivos');
+            let count;
+            if (id.count == undefined) {
+                count = 1;
+            }
+            else {
+                count = Number(id.count) + 1;
+            }
+            console.log(count);
+            const about = splitedMessage[1];
+            const file_type = Number(splitedMessage[2]);
+            const content = splitedMessage[3];
+            const table = {
+                text: 'INSERT INTO Arquivos VALUES ($1, $2, $3, $4)',
+                values: [count, about, file_type, content]
+            }
+            await db.select_built(table);
+        })()
+        }
+
+        //Verify//
+        if (command == "|verify") {
+            (async() => {
+            const result = await db.select_built('SELECT * FROM Arquivos');
+            if (result.length > 0) {
+            message.channel.send("The files are:\n");
+            for (i = 0; i < result.length; ++i) {
+                await message.channel.send("Id: " + result[i].archive_id + "\nAbout: " + result[i].about + "\nFile_Type: " + result[i].file_type + "\nText: " + result[i].content);
+            }
+            }
+            else {
+            message.channel.send("No files here. Please insert some.")
+            }
+            })()
+        }
+
+        //Cleanse//
+        if (command == "|cleanse") {
+            (async() => {
+                await db.select_built('DELETE FROM Arquivos');
+                message.channel.send("Nuked! Todos os dados foram deletados!");
+            })()
+        }
+    }
+    
+    //Security Level — Common//
+    //Menu//
+    if (command == "!menu") {
+        (async() => {
+        const filter = (reaction, user) => {
+            return ((reaction.emoji.name === '⬇️' || reaction.emoji.name === '⬆️') && user.id === message.author.id)
+        };
+        const a = await message.channel.send("```\nExodusOS 1.3 (FS)\n\n> Play\n  Options```");
+        await a.react('⬆️');
+        await a.react('⬇️');
+            a.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+            .then(collected => {
+                if (collected.emoji.name === '⬇️') {
+                a.edit("```\nExodusOS 1.3 (FS)\n\n  Play\n> Options```");
+                }
+                else if (collected.emoji.name === '⬆️') {
+                a.edit("```\nExodusOS 1.3 (FS)\n\n> Play\n  Options```");
+                }
+            })
+            .catch(collected => {
+                message.channel.send('The menu has ended.');
+            });
+        })()
+    }
+
+    /*Macro Modules
+    ---------------*/
     if (command == "!macro") {
         (async() => {
-	message.delete({timeout: 1000});
             const table = {
                 text: 'SELECT config_object FROM Dados WHERE user_id = $1',
                 values: [author_id]
@@ -110,9 +243,8 @@ client.on('message', message => {
                 }
                 await db.select_built (table);
                 message.channel.send("Seu nick não estava registrado. Agora esta!");
-		message.channel.send("Use !macro para poder rolar dados sem !roll, e usar os comandos de macro ($)");
             }
-            const config = macro_info.config_object;
+            const config = macro_info[0].config_object;
             if (config == "macro=on") {
                 return 1;
             }
@@ -124,16 +256,21 @@ client.on('message', message => {
     //All macro commands are inicialized with $//
     var lmacro = 0;
     if (command.startsWith('$') == 1 || /[0-9]d[0-9]/g.test(command) == 1) {
-        console.log(1);
         (async () => {
         lmacro = await verify(`${author_id}`);
-        console.log(lmacro);
-        console.log(2);
         //Macro Commands//
         if (lmacro == 1) {
-	    message.delete({timeout: 100});
-            if (/^\$/g.test(splitedMessage[0]) == 1) {
+            if (command == "$end") {
+                if (isAdmin == 1) {;
+                    (async () => {
+                    await message.channel.send("`Finished session.");
+                    client.destroy();
+                    })()
+                }
+            }
+            else if (/^\$/g.test(splitedMessage[0]) == 1) {
                 command = command.replace(/^\$/g, '!titulo');
+                message.delete({timeout: 100});
                 splitedMessage2 = message.content.split('"');
                 Zones(message, splitedMessage, splitedMessage2);
             }
@@ -148,10 +285,8 @@ client.on('message', message => {
     })()
  }   
 
-    
-
-
-    //Sector Module//
+    /*Sector Module
+    ---------------*/
     async function Zones(message, splitedMessage, splitedMessage2) {
 
         let image;
@@ -560,14 +695,33 @@ else {
     }
 
 //Modulo - Conquista//
-if (command === '!conquista') {
+if (command === '!conquista' && isAdmin == 1) {
     const Conquista = {
-        index: ["Comum;", "Raro;", "Epico;", "Lendario;", "Extraordinario;", "Lore;"],
-        color_value: ["#fffffe", "#037ffc", "#6d38f6", "#ffc737", "#ff7300", "#bbbcc2"]
+        index: ["Comum;", "Raro;", "Epico;", "Lendario;", "Extraordinario;", "Lore;", "Newsletter;"],
+        color_value: ["#fffffe", "#037ffc", "#6d38f6", "#ffc737", "#ff7300", "#bbbcc2", "#bbbcc2"]
     }
     let color_index; 
     let flag_index = 0;
-    for (i = 0; i < 6; ++i) {
+
+    //Lore//
+    if (splitedMessage[1] == Conquista.index[5]) {
+        let Aspas = message.content.split('; ');
+        const Embed = new Discord.MessageEmbed()
+        .setColor(Conquista.color_value[5])
+        .setAuthor(Aspas[1])
+        .setTitle(Aspas[2])
+        .setDescription(Aspas[3])
+        .setFooter(`\nMestre: ${message.author.username}`);
+        if (Aspas.length > 4 && (Aspas.length % 2) == 0) {
+            for (i = 4; i < Aspas.length; i = i + 2) {
+                Embed.addField(Aspas[i], Aspas[i+1]);
+            }
+        }
+        message.channel.send(Embed);
+    }
+    else
+    {
+    for (i = 0; i < 7; ++i) {
         if (splitedMessage[1] == Conquista.index[i]) {
             color_index = Conquista.color_value[i];
             flag_index = 1;
@@ -578,7 +732,6 @@ if (command === '!conquista') {
     }
     else if (flag_index == 1) {
     let Aspas = message.content.split('; ');
-    console.log(Aspas);
     const Embed = new Discord.MessageEmbed()
     .setColor(color_index);
     for (i = 1; i < Aspas.length; ++i) {
@@ -590,12 +743,17 @@ if (command === '!conquista') {
                 Embed.setDescription(Aspas[i]);
             break;
             case 3:
-                Embed.setFooter(Aspas[3] + `\nMestre: ${message.author.username}`);
-        }
+                if (splitedMessage[1] != "Newsletter;") {
+                    Embed.setFooter(Aspas[3] + `\nMestre: ${message.author.username}`);
+                }
+                else {
+                    Embed.setFooter(Aspas[3]);
+                }
+            }  
     }   
     if (Aspas.length > 4) {
         let AspasTamanho = Aspas.length;
-        if (/image/g.test(Aspas[AspasTamanho]) == 0) {
+        if (/image/g.test(Aspas[AspasTamanho]) == 1) {
             --AspasTamanho;
         }
         for (i = 4; i < AspasTamanho; ++i) {
@@ -625,21 +783,27 @@ if (command === '!conquista') {
     message.channel.send(Embed);
 }
 }
+}
 
     //Webhook Module//
     async function WebhookOperator(message, webhookMessage, webhookName) {
+
+        //Object//
+        const webhooks = {
+            type: ["Exodus", "Solaris", "Mercurio", "Terra", "Eldunari", "Kindergarten"],
+            image_link: ["https://cdn.discordapp.com/attachments/752322158386085978/785909310030741533/Exodus2.png", "https://cdn.discordapp.com/attachments/752322158386085978/785910105257410640/Solaris.png",
+            "https://cdn.discordapp.com/attachments/752322158386085978/785911058023317524/Mercurio.png", "https://cdn.discordapp.com/attachments/702624141173588069/780556161874133002/Sem_Titulo-2.png",
+            "https://cdn.discordapp.com/attachments/752322158386085978/785910168135139328/Eldunari.png", "https://cdn.discordapp.com/attachments/752322158386085978/785910136308629524/Kindergarden.png"]
+        }
+
         const channel_to_go = message.channel;
-        const webhook = await client.fetchWebhook("774245779903873066", "PXWptLKsTX8c8RJRifH28i8qAZvlY139wRVnlpJNsx4s8uiv7st8vSh2Bl3mQL9FrDLm");
+        const webhook = await client.fetchWebhook("770268256371736598", "sNEevSMxq3FsmRnbI958aRZWqA3fJqoysMnM2evarPVb8Gp1ctm3ulsfwgG4cRsUYwpw");
         let index = webhooks.type.indexOf(webhookName);
         if (index == -1) {
-            if (/NPC=/g.test(webhookName) == 1) {
-                index = 0;
-                webhookName = webhookName.replace(/NPC=/g, "");
-                console.log(webhookName);
-            }
+            var webhookImage = webhooks.image_link[0];
         }
-        if (index != -1) {
-            var webhookImage = webhooks.image_links[index];
+        else if (index != -1) {
+            var webhookImage = webhooks.image_link[index];
         }
         await webhook.edit({
             name: webhookName,
@@ -649,17 +813,12 @@ if (command === '!conquista') {
         await webhook.send(webhookMessage);
     }
 
-    const webhooks = {
-        type: ["NPC", "Exodus", "Solaris", "Mercurio", "Terra", "Eldunari", "Kindergarten"],
-        image_links: ["https://cdn.discordapp.com/attachments/752322158386085978/785909310030741533/Exodus2.png", 
-        "https://cdn.discordapp.com/attachments/752322158386085978/785909310030741533/Exodus2.png", "https://cdn.discordapp.com/attachments/752322158386085978/785910105257410640/Solaris.png",
-        "https://cdn.discordapp.com/attachments/752322158386085978/785911058023317524/Mercurio.png", "https://cdn.discordapp.com/attachments/702624141173588069/780556161874133002/Sem_Titulo-2.png",
-        "https://cdn.discordapp.com/attachments/752322158386085978/785910168135139328/Eldunari.png", "https://cdn.discordapp.com/attachments/752322158386085978/785910136308629524/Kindergarden.png"]
-    }
-    if (/>:/g.test(command) == 1 && admin == 1) {
-        message.delete({timeout: 1000});
+    //Command - Webhook//
+    splitedByArrow = message.content.split(/ -> /g);
+    if (splitedByArrow.length > 1 && isAdmin == 1) {
+        message.delete();
         let command_array = [];
-        command_array = message.content.split(/>: /g);
+        command_array = message.content.split(/ -> /g);
         console.log(command_array);
         WebhookOperator(message, command_array[1], command_array[0]);
     }
