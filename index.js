@@ -228,7 +228,7 @@ client.on('message', message => {
         })()
     }
 
-    //Verifier//
+       //Verifier//
     async function verify(author) {
             const table = {
                 text: 'SELECT config_object FROM Dados WHERE user_id = $1',
@@ -237,11 +237,11 @@ client.on('message', message => {
             const macro_info = await db.select_built(table);
             if (macro_info == undefined) {
                 console.log("Register");
-                const table = {
+                const table2 = {
                     text: 'INSERT INTO Dados VALUES ($1, $2)',
                     values: [author_id, 'macro=off']
                 }
-                await db.select_built(table);
+                await db.select_built(table2);
                 message.channel.send("Seu nick não estava registrado. Agora esta!");
             }
             const config = macro_info[0].config_object;
@@ -254,7 +254,6 @@ client.on('message', message => {
                 return 0;
             }
     }
-
     //All macro commands are inicialized with $//
     var lmacro = 0;
     if (command.startsWith('$') == 1 || /[0-9]d[0-9]/g.test(command) == 1) {
