@@ -244,7 +244,7 @@ client.on('message', message => {
                 await db.select_built(table2);
                 message.channel.send("Seu nick não estava registrado. Agora esta!");
             }
-            const config = macro_info[0].config_object;
+            const config = macro_info.config_object;
             if (config == "macro=on") {
                 console.log("Has macro!")
                 return 1;
