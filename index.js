@@ -182,30 +182,6 @@ client.on('message', message => {
     }
     
     //Security Level — Common//
-    //Menu//
-    if (command == "!menu") {
-        (async() => {
-        const filter = (reaction, user) => {
-            return ((reaction.emoji.name === '⬇️' || reaction.emoji.name === '⬆️') && user.id === message.author.id)
-        };
-        const a = await message.channel.send("```\nExodusOS 1.3 (FS)\n\n> Play\n  Options```");
-        await a.react('⬆️');
-        await a.react('⬇️');
-            a.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
-            .then(collected => {
-                if (collected.emoji.name === '⬇️') {
-                a.edit("```\nExodusOS 1.3 (FS)\n\n  Play\n> Options```");
-                }
-                else if (collected.emoji.name === '⬆️') {
-                a.edit("```\nExodusOS 1.3 (FS)\n\n> Play\n  Options```");
-                }
-            })
-            .catch(collected => {
-                message.channel.send('The menu has ended.');
-            });
-        })()
-    }
-
     /*Macro Modules
     ---------------*/
     if (command == "!macro") {
